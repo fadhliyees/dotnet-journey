@@ -1,4 +1,14 @@
+# Build results
 bin/
 obj/
-*.user
+
+# Visual Studio
 .vs/
+*.user
+
+# Rider
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
