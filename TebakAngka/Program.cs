@@ -124,6 +124,7 @@ bool mainLagi = true;
 
 while (mainLagi)
 {
+    Console.Clear();
     TampilkanHeader();
     int maxNumber = PilihKesulitan();
     MainGame(maxNumber);
