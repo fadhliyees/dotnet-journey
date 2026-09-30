@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-void TampilkanMenu()
+﻿void TampilkanMenu()
 {
     Console.WriteLine("==================");
     Console.WriteLine("| Daftar Belanja |");
@@ -20,7 +18,7 @@ void TambahBarang(List<Item> daftarBelanja)
     string? nama = Console.ReadLine();
     Console.Write("Jumlah: ");
     string? jumlahInput = Console.ReadLine();
-    if (!string.IsNullOrWhiteSpace(nama) && int.TryParse(jumlahInput, out int jumlah))
+    if (!string.IsNullOrWhiteSpace(nama) && int.TryParse(jumlahInput, out int jumlah) && jumlah > 0)
     {
         daftarBelanja.Add(new Item { Nama = nama, Jumlah = jumlah });
         Console.WriteLine($"\nBarang '{nama}' berhasil ditambahkan.\n");
@@ -88,36 +86,88 @@ void HapusBarang(List<Item> daftarBelanja)
     }
 }
 
+// LINQ - Search
+//void CariBarang(List<Item> daftarBelanja)
+//{
+//    Console.Write("Masukkan nama barang yang ingin dicari: ");
+//    string? input = Console.ReadLine();
+//    if (!string.IsNullOrWhiteSpace(input))
+//    {
+//        var hasil = daftarBelanja.Where(b => b.Nama.Contains(input, StringComparison.OrdinalIgnoreCase)).ToList();
+//        if (hasil.Any())
+//        {
+//            Console.WriteLine("=== Hasil Pencarian ===");
+//            for (int i = 0; i < hasil.Count; i++)
+//            {
+//                Console.WriteLine($"{i + 1}. {hasil[i].Nama} - Jumlah: {hasil[i].Jumlah}");
+//            }
+//        }
+//        else
+//        {
+//            Console.WriteLine("Barang tidak ditemukan.\n");
+//        }
+//    }
+//    else
+//    {
+//        Console.WriteLine("Nama barang tidak boleh kosong.\n");
+//    }
+//}
+
 void CariBarang(List<Item> daftarBelanja)
 {
     Console.Write("Masukkan nama barang yang ingin dicari: ");
-    string? input = Console.ReadLine()?.ToLower();
-    if (!string.IsNullOrWhiteSpace(input))
-    {
-        var hasil = daftarBelanja.Where(b => b.Nama.Contains(input, StringComparison.OrdinalIgnoreCase)).ToList();
-        if (hasil.Any())
-        {
-            Console.WriteLine("=== Hasil Pencarian ===");
-            for (int i = 0; i < hasil.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}. {hasil[i].Nama} - Jumlah: {hasil[i].Jumlah}");
-            }
-        }
-        else
-        {
-            Console.WriteLine("Barang tidak ditemukan.\n");
-        }
-    }
-    else
+    string? input = Console.ReadLine();
+
+    if(string.IsNullOrWhiteSpace(input))
     {
         Console.WriteLine("Nama barang tidak boleh kosong.\n");
+        return;
+    }
+
+    bool ditemukan = false;
+    int nomor = 1;
+
+    foreach (Item barang in daftarBelanja)
+    {
+        if(barang.Nama.ToLower().Contains(input.ToLower()))
+        {
+            Console.WriteLine($"{nomor}. {barang.Nama} - Jumlah: {barang.Jumlah}");
+            nomor++;
+            ditemukan = true;
+        }
+    }
+
+    if (!ditemukan)
+    {
+        Console.WriteLine("Barang tidak ditemukan.");
     }
 }
 
+// LINQ - Sort
+//void UrutkanDaftar(List<Item> daftarBelanja)
+//{
+//    daftarBelanja.Sort((a, b) => string.Compare(a.Nama, b.Nama, StringComparison.OrdinalIgnoreCase));
+//    Console.WriteLine("Daftar belanja berhasil diurutkan berdasarkan nama barang.\n");
+//}
+
 void UrutkanDaftar(List<Item> daftarBelanja)
 {
-    daftarBelanja.Sort((a, b) => string.Compare(a.Nama, b.Nama, StringComparison.OrdinalIgnoreCase));
-    Console.WriteLine("Daftar belanja berhasil diurutkan berdasarkan nama barang.\n");
+    int n = daftarBelanja.Count;
+
+    for (int i=0; i<n-1; i++)
+    {
+        for (int j=0; j<n-1-i; j++)
+        {
+            if (string.Compare(daftarBelanja[j].Nama, daftarBelanja[j + 1].Nama, StringComparison.OrdinalIgnoreCase) > 0)
+            {
+                Item temp = daftarBelanja[j];
+                daftarBelanja[j] = daftarBelanja[j + 1];
+                daftarBelanja[j + 1] = temp;
+            }
+        }
+    }
+
+    Console.WriteLine("Daftar belanja berhasil diurutkan berdasarkan nama.\n");
 }
 
 void HapusSemuaBarang(List<Item> daftarBelanja)
@@ -165,6 +215,7 @@ void Main()
                 break;
             case "5":
                 UrutkanDaftar(daftarBelanja);
+                LihatDaftar(daftarBelanja);
                 Console.ReadLine();
                 break;
             case "6":
